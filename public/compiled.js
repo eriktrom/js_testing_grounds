@@ -60,6 +60,21 @@ get properties that come from another constructor Parent()
     ok(typeof parent === "object");
     ok(typeof parent !== "function");
     ok(typeof kid === "object");
-    return ok(typeof kid !== "function");
+    ok(typeof kid !== "function");
+    ok(kid.__proto__ === Child.prototype);
+    ok(kid instanceof Child);
+    ok(kid.__proto__ !== Parent.prototype);
+    ok(kid.__proto__.__proto__ === Parent.prototype);
+    ok(typeof kid.__proto__.__proto__ === "object");
+    ok(typeof kid.__proto__.__proto__.constructor === "function");
+    ok(kid instanceof Parent);
+    ok(kid instanceof Parent.prototype.constructor);
+    return ok(kid instanceof Parent.prototype.constructor.prototype.constructor);
   }));
 })();
+
+test("valueOf", function() {
+  var a;
+  a = {};
+  return ok(a.valueOf() === a);
+});

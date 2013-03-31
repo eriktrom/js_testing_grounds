@@ -29,10 +29,10 @@ do ->
 
   module "Example 1",
     # implementation
-    # create an object using the Parent() onstructor 
+    # create an object using the Parent() onstructor
     # and assign that object to the Child()'s prototype
     # remember, prototype should point to an object, not a function, so it has
-    # to point to an instance of an object created with the parent constructor, 
+    # to point to an instance of an object created with the parent constructor,
     # not the constructor itself. In other words, make sure you use new P()
     inherit = (C, P) ->
       C:: = new P()
@@ -45,7 +45,7 @@ do ->
       # data, specifically @name
 
     # adding functionality to the prototype
-    # when you try to access 
+    # when you try to access
     Parent::say = ->
       @name
 
@@ -75,7 +75,7 @@ do ->
     #   prototype property of the constructor function Parent(), you gain access
     #   to object #1 (Parent.prototype), which can answer the say method
     # - this is important b/c its necessary to know where the data your accessing
-    #   or modifying is located. 
+    #   or modifying is located.
 
     # after using the inherit function, you add a new block, #3, at the bottom
     # of the chain, and its an instance of child
@@ -90,16 +90,16 @@ do ->
     # - #3 doesn't have the say() method, so it looks up the chain to #2, which
     # also doesn't have it, so it looks the chain to #1, where say() is defined.
     # Now, inside of say(), there's a reference to this.name, which needs to be
-    # resolved. The lookup starts again. 
+    # resolved. The lookup starts again.
     # Here's where it gets a bit tricky - if say() has a reference to this.name,
     # 1. What is this pointing to
     # 2. ^^ will define the lookup path for this.name
-    # in the example here, this points to #3(kid). #3 doesn't have a name, so 
+    # in the example here, this points to #3(kid). #3 doesn't have a name, so
     # it looks up the chain to #2, which does, and that's where it gets it from
-    
+
     test "setting kid.name adds name property to object #3", ->
       # object #3 is kid, fyi
-      # so this time, say() is found on #1, where this.name is referenced, 
+      # so this time, say() is found on #1, where this.name is referenced,
       # then lookup for this.name begins again at #3(the reciever of say())
       # where it finds the set property name. Now #2 and #3 both contain the
       # name property, but lookup always begins on the receiver of the message,
@@ -118,7 +118,7 @@ do ->
       ok(hasProperty(Parent, "name"))
       ok(hasPropertyWithValue(Parent::, "name", undefined))
       ok(hasOwnPropertyWithValue(Parent::, "name", undefined) is false)
-      
+
       ok(typeof (Parent::constructor::constructor::) is "object")
       ok(typeof (Parent::constructor::constructor::) isnt "function")
 
@@ -128,18 +128,82 @@ do ->
       ok(typeof (Parent::constructor::) is "object")
       ok(typeof (Parent::constructor::) isnt "function")
 
+      #constructor is function
       ok(typeof (Parent::constructor) is "function")
       ok(typeof (Parent::constructor) isnt "object")
 
+      # prototype is object
       ok(typeof (Parent::) is "object")
       ok(typeof (Parent::) isnt "function")
 
+      # constructor function
       ok(typeof Parent is "function")
       ok(typeof Parent isnt "object")
 
+      # new ConstructorFunction results in object
       ok(typeof parent is "object")
       ok(typeof parent isnt "function")
 
       ok(typeof kid is "object")
       ok(typeof kid isnt "function")
+
+      # internal lookup of prototype of an object returns the actual
+      # prototype object of constructor function instance was instantiated from
+      ok(kid.__proto__ is Child::)
+      ok(kid instanceof Child)
+
+      # the silver lining of the language
+      ok(kid.__proto__ isnt Parent::)
+      ok(kid.__proto__.__proto__ is Parent::)
+      ok(typeof (kid.__proto__.__proto__) is "object")
+      ok(typeof (kid.__proto__.__proto__.constructor) is "function")
+      # ^^ I think you could set the constructor above and affect all new
+      # instances made
+      # ^^ If you edit the prototype above, you affect all instances already made
+      # If the two above statements are true(need to verify w/ tests) then:
+        # put methods on the prototype
+        # put static properties(properties that don't return a function) on
+          # on prototype's constructor(or somewhere in the constructor chain)
+        # constructors setup the state of the object when its instantiated,
+        # prototypes are responsible for answering messages received
+
+        # use apply to do partial application to different parts of the chain
+          # for some really crazy shit (<-- also needs verification and tests)
+        # learn/understand apply and call more
+          # perhaps in conjuction with currying (or not)
+
+      ok(kid instanceof Parent)
+      ok(kid instanceof Parent::constructor)
+      ok(kid instanceof Parent::constructor::constructor)
+
+      # ERROR - learn how to test this, what this failure means
+      # Expecting a function in instanceof check, but got [object Object]
+      # ok(!(kid instanceof Parent::))
+      # ok(not (kid instanceof Parent::constructor::constructor::))
+
+
+      # every constructor has a prototype property which it uses to
+      # assign prototypes to all instances it generates
+
+      # __proto__ is [[Prototype]] in ECMAScript docs
+      # its just an internal lookup pointer, 
+      # similar to an eigenclass in ruby (<-- verify w/ tests from both js & rb)
+
+
+
+test "valueOf", ->
+  a = {}
+  ok(a.valueOf() is a)
+
+    # test "something strange", ->
+    #   SubscriberSource = (Constructor) ->
+    #     @Constructor ||= Constructor
+    #     @Constructor.call(@)
+    #     return
+
+    #   sourceDbl = do ->
+
+
+    #   subscriber = SubscriberSource.call(SourceDbl)
+
 
