@@ -145,7 +145,7 @@ do ->
       ok(typeof parent isnt "function")
 
       ok(typeof kid is "object")
-      ok(typeof kid isnt "function")
+      ok(typeof kid isnt "function") 
 
       # internal lookup of prototype of an object returns the actual
       # prototype object of constructor function instance was instantiated from
@@ -157,20 +157,6 @@ do ->
       ok(kid.__proto__.__proto__ is Parent::)
       ok(typeof (kid.__proto__.__proto__) is "object")
       ok(typeof (kid.__proto__.__proto__.constructor) is "function")
-      # ^^ I think you could set the constructor above and affect all new
-      # instances made
-      # ^^ If you edit the prototype above, you affect all instances already made
-      # If the two above statements are true(need to verify w/ tests) then:
-        # put methods on the prototype
-        # put static properties(properties that don't return a function) on
-          # on prototype's constructor(or somewhere in the constructor chain)
-        # constructors setup the state of the object when its instantiated,
-        # prototypes are responsible for answering messages received
-
-        # use apply to do partial application to different parts of the chain
-          # for some really crazy shit (<-- also needs verification and tests)
-        # learn/understand apply and call more
-          # perhaps in conjuction with currying (or not)
 
       ok(kid instanceof Parent)
       ok(kid instanceof Parent::constructor)
@@ -205,5 +191,9 @@ test "valueOf", ->
 
 
     #   subscriber = SubscriberSource.call(SourceDbl)
+
+
+
+  
 
 
