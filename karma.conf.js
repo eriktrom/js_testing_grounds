@@ -12,12 +12,14 @@ files = [
   QUNIT_ADAPTER,
   // 'public/vendor/hamcrest.js',
   'coffee/**/*_test.coffee'
+
+  // coffee -j public/compiled.js -cwbl coffee/*_test.coffee
 ];
 
 
 // list of files to exclude
 exclude = [
-  
+
 ];
 
 
