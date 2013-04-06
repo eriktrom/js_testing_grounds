@@ -77,6 +77,9 @@ do ->
 
     myObject.myMethod("myMethodArg")
 
+    # Note the use of Array::slice.call(actual)
+    #   when we add argument inspection to our stubber, we'll have to remember
+    #   to bring this along. I am not sure why this is not in the book
     deepEqual(Array::slice.call(actual), ["dependencyMethodArg", "myMethodArg"])
 
 ### End example of stubbing ###
