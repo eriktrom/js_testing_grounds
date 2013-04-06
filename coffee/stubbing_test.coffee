@@ -11,10 +11,10 @@ app = do ->
 
   {namespace}
 
-ajax = app.namespace("ajax")
-ajax.get = ->
+app.namespace("ajax")
+app.ajax.get = ->
 
-module "app"
+module "app.ajax"
 
 test "it should define a get method", ->
-  ok(typeof ajax.get is "function")
+  ok(typeof app.ajax.get is "function")
