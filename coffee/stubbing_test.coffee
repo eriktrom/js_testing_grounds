@@ -25,8 +25,6 @@ do ->
 
 # test/stub_test.coffee
 do ->
-  stubber = app.stubber
-
   module "app.stubber"
 
   test "it sets a flag when a method is called", ->
@@ -46,8 +44,7 @@ do ->
     anObject = app.anObject
     dependencyObject = app.dependencyObject
 
-    dependencyObject.dependencyMethod = ->
-      dependencyObject.dependencyMethod.called = true
+    dependencyObject.dependencyMethod = app.stubber.stubFn()
 
     anObject.aMethod()
 
