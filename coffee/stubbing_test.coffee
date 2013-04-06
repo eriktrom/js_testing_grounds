@@ -21,7 +21,8 @@ do ->
       fn.args = Array::slice.call(arguments)
       returnedDependencyObject
     fn.called = false
-    fn
+    fn #<-- return a function object, which, when called, will return
+       # returnedDependencyObject
 
   stubber.stubFn = stubFn
 
@@ -30,6 +31,16 @@ do ->
   collaberatorFactory = app.namespace("collaberatorFactory")
   createDependencyObject = ->
   collaberatorFactory.createDependencyObject = createDependencyObject
+
+  module "collaberatorFactory"
+  test "is an object", ->
+    ok(typeof collaberatorFactory is "object")
+    ok(typeof collaberatorFactory isnt "function")
+
+  module "collaberatorFactory#createDependencyObject"
+  test "is a function", ->
+    ok(typeof collaberatorFactory.createDependencyObject is "function")
+    ok(typeof collaberatorFactory.createDependencyObject isnt "object")
 
 ### src/sut.coffee ###
 do ->
@@ -41,6 +52,11 @@ do ->
       .understoodMessage("createDependencyObjectArg", myMethodArg)
   myObject.myMethod = myMethod
 
+  module "myObject"
+  test "is an object", -> ok(typeof myObject is "object")
+  module "myObject#myMethod"
+  test "is a function", -> ok(typeof myObject.myMethod is "function")
+
 ### test/stub_test.coffee ###
 do ->
   collaberatorFactory = app.collaberatorFactory
@@ -49,9 +65,11 @@ do ->
 
   module "app.stubber",
     setup: ->
-      @originalDependencyObject = collaberatorFactory.createDependencyObject
+      @originalCreateDependencyObject =
+        collaberatorFactory.createDependencyObject
     teardown: ->
-      collaberatorFactory.createDependencyObject = @originalDependencyObject
+      collaberatorFactory.createDependencyObject =
+          @originalCreateDependencyObject
 
   test "sets a flag when a method is called", ->
     collaberatorFactory.createDependencyObject =
