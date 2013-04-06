@@ -15,9 +15,10 @@ app = do ->
 do ->
   stubber = app.namespace("stubber")
 
-  stubFn = ->
+  stubFn = (returnedObject) ->
     fn = ->
       fn.called = true
+      returnedObject
     fn.called = false
     fn
 
@@ -33,7 +34,9 @@ do ->
 do ->
   myObject = app.namespace("myObject")
   dependencyObject = app.dependencyObject
-  myMethod = -> dependencyObject.dependencyMethod()
+  myMethod = (myMethodArg) ->
+    dep = dependencyObject.dependencyMethod()
+    dep.aReturnedObject("dependencyMethodArg", myMethodArg)
   myObject.myMethod = myMethod
 
 ### test/stub_test.coffee ###
@@ -52,5 +55,15 @@ do ->
     dependencyObject.dependencyMethod = stubber.stubFn()
     myObject.myMethod()
     ok(dependencyObject.dependencyMethod.called)
+
+  test "it returns the object or value given through argument", ->
+    actual = null
+    dependencyObject.dependencyMethod = stubber.stubFn
+      aReturnedObject: ->
+        actual = Array::slice.call(arguments)
+
+    myObject.myMethod("myMethodArg")
+
+    deepEqual(actual, ["dependencyMethodArg", "myMethodArg"])
 
 ### End example of stubbing ###
