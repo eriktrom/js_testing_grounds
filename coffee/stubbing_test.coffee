@@ -15,71 +15,54 @@ app = do ->
 do ->
   stubber = app.namespace("stubber")
 
-  stubFn = (returnedObject) ->
+  stubFn = (returnedDependencyObject) ->
     fn = ->
       fn.called = true
-      returnedObject
+      fn.args = Array::slice.call(arguments)
+      returnedDependencyObject
     fn.called = false
     fn
 
   stubber.stubFn = stubFn
 
-# src/dependency.coffee
+# src/collaberator_factory.coffee
 do ->
-  dependencyObject = app.namespace("dependencyObject")
-  dependencyMethod = ->
-  dependencyObject.dependencyMethod = dependencyObject
+  collaberatorFactory = app.namespace("collaberatorFactory")
+  createDependencyObject = ->
+  collaberatorFactory.createDependencyObject = createDependencyObject
 
 ### src/sut.coffee ###
 do ->
   myObject = app.namespace("myObject")
-  dependencyObject = app.dependencyObject
+  collaberatorFactory = app.collaberatorFactory
   myMethod = (myMethodArg) ->
-    dep = dependencyObject.dependencyMethod()
-    dep.aReturnedObject("dependencyMethodArg", myMethodArg)
+    returnedDependencyObject = collaberatorFactory.createDependencyObject()
+    returnedDependencyObject.understoodMessage("createDependencyObjectArg", myMethodArg)
   myObject.myMethod = myMethod
 
 ### test/stub_test.coffee ###
 do ->
-  dependencyObject = app.dependencyObject
+  collaberatorFactory = app.collaberatorFactory
   myObject = app.myObject
   stubber = app.stubber
 
   module "app.stubber",
     setup: ->
-      @originalDependencyMethod = dependencyObject.dependencyMethod
+      @originalDependencyMethod = collaberatorFactory.createDependencyObject
     teardown: ->
-      dependencyObject.dependencyMethod = @originalDependencyMethod
+      collaberatorFactory.createDependencyObject = @originalDependencyMethod
 
-  test "it sets a flag when a method is called", ->
-    # this test is currently failing b/c dependencyObject.dependencyMethod()
-    # stub does not return an object, so when the app code calls:
-    # `dep.aReturnedObject("dependencyMethodArg", myMethodArg)`, its essentially
-    # trying to call `undefined.aReturnedObject("dependencyMethodArg", myMethodArg)`
-    # which won't work.
-    dependencyObject.dependencyMethod = stubber.stubFn()
+  test "sets a flag when a method is called", ->
+    collaberatorFactory.createDependencyObject = stubber.stubFn(understoodMessage: ->)
     myObject.myMethod()
-    ok(dependencyObject.dependencyMethod.called)
+    ok(collaberatorFactory.createDependencyObject.called)
 
-  test "it returns the object or value given through argument", ->
-    actual = null
-    # in contrast to the previous test, we use stubFn to create one stub,
-    # while manually creating a stub aReturnedObject method in order to inspect
-    # its received arguments
-
-    # this stub DOES return an object, therefore when calling:
-    # `dep.aReturnedObject("dependencyMethodArg", myMethodArg)`, dep is defined,
-    # and it is a function we can call, it does receive arguments, and therefore,
-    # we can inspect those arguments
-    dependencyObject.dependencyMethod = stubber.stubFn
-      aReturnedObject: ->
-        actual = arguments
+  test "returns the object or value given through argument", ->
+    returnedDependencyObjectDbl = stubber.stubFn()
+    collaberatorFactory.createDependencyObject =
+      stubber.stubFn(understoodMessage: returnedDependencyObjectDbl)
 
     myObject.myMethod("myMethodArg")
-
-    # Note the use of Array::slice.call(actual)
-    #   when we add argument inspection to our stubber, we'll have to remember
-    #   to bring this along. I am not sure why this is not in the book
-    deepEqual(Array::slice.call(actual), ["dependencyMethodArg", "myMethodArg"])
+    deepEqual(returnedDependencyObjectDbl.args, ["createDependencyObjectArg", "myMethodArg"])
 
 ### End example of stubbing ###
