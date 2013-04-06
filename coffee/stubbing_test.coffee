@@ -52,6 +52,11 @@ do ->
       dependencyObject.dependencyMethod = @originalDependencyMethod
 
   test "it sets a flag when a method is called", ->
+    # this test is currently failing b/c dependencyObject.dependencyMethod()
+    # stub does not return an object, so when the app code calls:
+    # `dep.aReturnedObject("dependencyMethodArg", myMethodArg)`, its essentially
+    # trying to call `undefined.aReturnedObject("dependencyMethodArg", myMethodArg)`
+    # which won't work.
     dependencyObject.dependencyMethod = stubber.stubFn()
     myObject.myMethod()
     ok(dependencyObject.dependencyMethod.called)
