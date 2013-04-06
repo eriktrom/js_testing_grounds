@@ -28,18 +28,20 @@ do ->
   module "app.stubber"
 
   test "it sets a flag when a method is called", ->
-    # Given
+    # Given a collaberating object that understands how to answer
+    # `dependencyMethod`
     app.namespace("dependencyObject").dependencyMethod = ->
-
+    # and given my object calls dependencyObject.dependencyMethod
     app.namespace("anObject").aMethod = ->
       app.dependencyObject.dependencyMethod()
 
+    # and i stub dependencyObject.dependencyMethod
     app.dependencyObject.dependencyMethod = app.stubber.stubFn()
 
-    # When
+    # When I call the method on my object
     app.anObject.aMethod()
 
-    # Then
+    # Then dependencyObject.should_receive(:dependencyMethod)
     ok(app.dependencyObject.dependencyMethod.called)
 
 # src/request.coffee
