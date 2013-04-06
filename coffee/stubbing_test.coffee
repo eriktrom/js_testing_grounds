@@ -37,7 +37,8 @@ do ->
   collaberatorFactory = app.collaberatorFactory
   myMethod = (myMethodArg) ->
     returnedDependencyObject = collaberatorFactory.createDependencyObject()
-    returnedDependencyObject.understoodMessage("createDependencyObjectArg", myMethodArg)
+    returnedDependencyObject
+      .understoodMessage("createDependencyObjectArg", myMethodArg)
   myObject.myMethod = myMethod
 
 ### test/stub_test.coffee ###
@@ -53,8 +54,11 @@ do ->
       collaberatorFactory.createDependencyObject = @originalDependencyMethod
 
   test "sets a flag when a method is called", ->
-    collaberatorFactory.createDependencyObject = stubber.stubFn(understoodMessage: ->)
+    collaberatorFactory.createDependencyObject =
+      stubber.stubFn(understoodMessage: ->)
+
     myObject.myMethod()
+
     ok(collaberatorFactory.createDependencyObject.called)
 
   test "returns the object or value given through argument", ->
@@ -63,6 +67,8 @@ do ->
       stubber.stubFn(understoodMessage: returnedDependencyObjectDbl)
 
     myObject.myMethod("myMethodArg")
-    deepEqual(returnedDependencyObjectDbl.args, ["createDependencyObjectArg", "myMethodArg"])
+
+    deepEqual returnedDependencyObjectDbl.args,
+              ["createDependencyObjectArg", "myMethodArg"]
 
 ### End example of stubbing ###
