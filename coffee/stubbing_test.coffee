@@ -63,6 +63,14 @@ do ->
 
   test "it returns the object or value given through argument", ->
     actual = null
+    # in contrast to the previous test, we use stubFn to create one stub,
+    # while manually creating a stub aReturnedObject method in order to inspect
+    # its received arguments
+
+    # this stub DOES return an object, therefore when calling:
+    # `dep.aReturnedObject("dependencyMethodArg", myMethodArg)`, dep is defined,
+    # and it is a function we can call, it does receive arguments, and therefore,
+    # we can inspect those arguments
     dependencyObject.dependencyMethod = stubber.stubFn
       aReturnedObject: ->
         actual = arguments
