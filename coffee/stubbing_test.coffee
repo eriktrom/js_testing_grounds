@@ -13,6 +13,9 @@ app = do ->
 
 # src/request.coffee
 do ->
+  # app.namespace("ajax") needs to be called before app.ajax will work,
+  # thus, the first file that uses app.ajax should define this, in face,
+  # its just good practice to define it inside any file that will use this
   ajax = app.namespace("ajax")
 
   get = (url) ->
@@ -22,6 +25,11 @@ do ->
 
 # test/request_test.coffee
 do ->
+  # ajax = app.ajax would work here too b/c we defined app.namespace("ajax")
+  # in the source file. defining it here though like this would mean we
+  # are not implicitly testing that our source file does so, thus, maybe we
+  # should not define this here
+  # ajax = app.namespace("ajax")
   ajax = app.ajax
 
   module "app.ajax"
