@@ -28,27 +28,16 @@ do ->
   module "app.stubber"
 
   test "it sets a flag when a method is called", ->
-    do ->
-      dependencyObject = app.namespace("dependencyObject")
-      dependencyMethod = ->
-      dependencyObject.dependencyMethod = dependencyMethod
+    app.namespace("dependencyObject").dependencyMethod = ->
 
-    do ->
-      anObject = app.namespace("anObject")
-      dependencyObject = app.dependencyObject
-      aMethod = ->
-        dependencyObject.dependencyMethod()
+    app.namespace("anObject").aMethod = ->
+      app.dependencyObject.dependencyMethod()
 
-      anObject.aMethod = aMethod
+    app.dependencyObject.dependencyMethod = app.stubber.stubFn()
 
-    anObject = app.anObject
-    dependencyObject = app.dependencyObject
+    app.anObject.aMethod()
 
-    dependencyObject.dependencyMethod = app.stubber.stubFn()
-
-    anObject.aMethod()
-
-    ok(dependencyObject.dependencyMethod.called)
+    ok(app.dependencyObject.dependencyMethod.called)
 
 # src/request.coffee
 do ->
