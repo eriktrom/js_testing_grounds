@@ -13,22 +13,17 @@ app = do ->
 
 # src/request.coffee
 do ->
-  # app.namespace("ajax") needs to be called before app.ajax will work,
-  # thus, the first file that uses app.ajax should define this, in face,
-  # its just good practice to define it inside any file that will use this
   ajax = app.namespace("ajax")
 
   get = (url) ->
-    unless typeof url is "string" then throw new TypeError("URL should be string")
+    unless typeof url is "string"
+      throw new TypeError("URL should be string")
+    transport = app.ajax.create()
 
   ajax.get = get
 
 # test/request_test.coffee
 do ->
-  # ajax = app.ajax would work here too b/c we defined app.namespace("ajax")
-  # in the source file. defining it here though like this would mean we
-  # are not implicitly testing that our source file does so, thus, maybe we
-  # should not define this here
   # ajax = app.namespace("ajax")
   ajax = app.ajax
 
@@ -37,9 +32,19 @@ do ->
   test "it should define a get method", ->
     ok(typeof ajax.get is "function")
 
-  module "app.ajax.get"
+  module "app.ajax.get",
+    setup: -> @originalCreate = ajax.create
+    teardown: -> ajax.create = @originalCreate
 
   test "it throws an error without url arg", ->
     throws ->
       ajax.get()
     , TypeError
+
+  test "it should obtain an XMLHttpRequest object", ->
+    ajax.create = ->
+      ajax.create.called = true
+
+    ajax.get("/url")
+
+    ok(ajax.create.called)
