@@ -23,6 +23,36 @@ do ->
 
   stubber.stubFn = stubFn
 
+# test/stub_test.coffee
+do ->
+  stubber = app.stubber
+
+  module "app.stubber"
+
+  test "it sets a flag when a method is called", ->
+    do ->
+      dependencyObject = app.namespace("dependencyObject")
+      dependencyMethod = ->
+      dependencyObject.dependencyMethod = dependencyMethod
+
+    do ->
+      anObject = app.namespace("anObject")
+      dependencyObject = app.dependencyObject
+      aMethod = ->
+        dependencyObject.dependencyMethod()
+
+      anObject.aMethod = aMethod
+
+    anObject = app.anObject
+    dependencyObject = app.dependencyObject
+
+    dependencyObject.dependencyMethod = ->
+      dependencyObject.dependencyMethod.called = true
+
+    anObject.aMethod()
+
+    ok(dependencyObject.dependencyMethod.called)
+
 # src/request.coffee
 do ->
   ajax = app.namespace("ajax")
