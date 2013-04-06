@@ -11,6 +11,18 @@ app = do ->
 
   {namespace}
 
+# lib/stub.coffee
+do ->
+  stubber = app.namespace("stubber")
+
+  stubFn = ->
+    fn = ->
+      fn.called = true
+    fn.called = false
+    fn
+
+  stubber.stubFn = stubFn
+
 # src/request.coffee
 do ->
   ajax = app.namespace("ajax")
@@ -26,6 +38,7 @@ do ->
 do ->
   # ajax = app.namespace("ajax")
   ajax = app.ajax
+  stubber = app.stubber
 
   module "app.ajax"
 
@@ -42,9 +55,9 @@ do ->
     , TypeError
 
   test "it should obtain an XMLHttpRequest object", ->
-    ajax.create = ->
-      ajax.create.called = true
+    ajax.create = stubber.stubFn()
 
     ajax.get("/url")
 
     ok(ajax.create.called)
+
