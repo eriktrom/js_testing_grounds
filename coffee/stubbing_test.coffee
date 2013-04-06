@@ -60,10 +60,10 @@ do ->
     actual = null
     dependencyObject.dependencyMethod = stubber.stubFn
       aReturnedObject: ->
-        actual = Array::slice.call(arguments)
+        actual = arguments
 
     myObject.myMethod("myMethodArg")
 
-    deepEqual(actual, ["dependencyMethodArg", "myMethodArg"])
+    deepEqual(Array::slice.call(actual), ["dependencyMethodArg", "myMethodArg"])
 
 ### End example of stubbing ###
