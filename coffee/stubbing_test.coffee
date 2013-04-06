@@ -49,9 +49,9 @@ do ->
 
   module "app.stubber",
     setup: ->
-      @originalDependencyMethod = collaberatorFactory.createDependencyObject
+      @originalDependencyObject = collaberatorFactory.createDependencyObject
     teardown: ->
-      collaberatorFactory.createDependencyObject = @originalDependencyMethod
+      collaberatorFactory.createDependencyObject = @originalDependencyObject
 
   test "sets a flag when a method is called", ->
     collaberatorFactory.createDependencyObject =
