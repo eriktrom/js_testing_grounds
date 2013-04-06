@@ -11,13 +11,18 @@ app = do ->
 
   {namespace}
 
-app.namespace("ajax")
+# src/request.coffee
+do ->
+  ajax = app.namespace("ajax")
 
+  get = (url) ->
+    unless typeof url is "string" then throw new TypeError("URL should be string")
+
+  ajax.get = get
+
+# test/request_test.coffee
 do ->
   ajax = app.ajax
-
-  ajax.get = (url) ->
-    unless typeof url is "string" then throw new TypeError("URL should be string")
 
   module "app.ajax"
 
