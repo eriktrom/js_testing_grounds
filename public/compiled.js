@@ -23,10 +23,22 @@ app = (function() {
 
 app.namespace("ajax");
 
-app.ajax.get = function() {};
+app.ajax.get = function(url) {
+  if (typeof url !== "string") {
+    throw new TypeError("URL should be string");
+  }
+};
 
 module("app.ajax");
 
 test("it should define a get method", function() {
   return ok(typeof app.ajax.get === "function");
+});
+
+module("app.ajax.get");
+
+test("it throws an error without url arg", function() {
+  return throws(function() {
+    return app.ajax.get();
+  }, TypeError);
 });

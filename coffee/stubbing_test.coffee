@@ -12,9 +12,17 @@ app = do ->
   {namespace}
 
 app.namespace("ajax")
-app.ajax.get = ->
+app.ajax.get = (url) ->
+  unless typeof url is "string" then throw new TypeError("URL should be string")
 
 module "app.ajax"
 
 test "it should define a get method", ->
   ok(typeof app.ajax.get is "function")
+
+module "app.ajax.get"
+
+test "it throws an error without url arg", ->
+  throws ->
+    app.ajax.get()
+  , TypeError
