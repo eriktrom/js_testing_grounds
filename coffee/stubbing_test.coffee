@@ -23,62 +23,42 @@ do ->
 
   stubber.stubFn = stubFn
 
-# test/stub_test.coffee
+###
+Stubbing Example - where myObject has a method, myMethod, that calls
+dependencyObject.dependencyMethod()
+- Given I stub dependencyObject.dependencyMethod = stubFn()
+- When I call myObject.myMethod
+- Then dependencyObject.dependencyMethod should have been called
+###
+
+### src/dependency.coffee ###
 do ->
-  module "app.stubber"
+  dependencyObject = app.namespace("dependencyObject")
+  dependencyMethod = ->
+  dependencyObject.dependencyMethod = dependencyObject
 
-  test "it sets a flag when a method is called", ->
-    # Given a collaberating object that understands how to answer
-    # `dependencyMethod`
-    app.namespace("dependencyObject").dependencyMethod = ->
-    # and given my object calls dependencyObject.dependencyMethod
-    app.namespace("anObject").aMethod = ->
-      app.dependencyObject.dependencyMethod()
-
-    # and i stub dependencyObject.dependencyMethod
-    app.dependencyObject.dependencyMethod = app.stubber.stubFn()
-
-    # When I call the method on my object
-    app.anObject.aMethod()
-
-    # Then dependencyObject.should_receive(:dependencyMethod)
-    ok(app.dependencyObject.dependencyMethod.called)
-
-# src/request.coffee
+### src/sut.coffee ###
 do ->
-  ajax = app.namespace("ajax")
+  myObject = app.namespace("myObject")
+  dependencyObject = app.dependencyObject
+  myMethod = -> dependencyObject.dependencyMethod()
+  myObject.myMethod = myMethod
 
-  get = (url) ->
-    unless typeof url is "string"
-      throw new TypeError("URL should be string")
-    transport = app.ajax.create()
-
-  ajax.get = get
-
-# test/request_test.coffee
+### test/stub_test.coffee ###
 do ->
-  # ajax = app.namespace("ajax")
-  ajax = app.ajax
+  dependencyObject = app.dependencyObject
+  myObject = app.myObject
   stubber = app.stubber
 
-  module "app.ajax"
+  module "app.stubber",
+    setup: ->
+      @originalDependencyMethod = dependencyObject.dependencyMethod
+    teardown: ->
+      dependencyObject.dependencyMethod = @originalDependencyMethod
 
-  test "it should define a get method", ->
-    ok(typeof ajax.get is "function")
+  test "it sets a flag when a method is called", ->
+    app.dependencyObject.dependencyMethod = stubber.stubFn()
+    app.myObject.myMethod()
+    ok(app.dependencyObject.dependencyMethod.called)
 
-  module "app.ajax.get",
-    setup: -> @originalCreate = ajax.create
-    teardown: -> ajax.create = @originalCreate
-
-  test "it throws an error without url arg", ->
-    throws ->
-      ajax.get()
-    , TypeError
-
-  test "it should obtain an XMLHttpRequest object", ->
-    ajax.create = stubber.stubFn()
-
-    ajax.get("/url")
-
-    ok(ajax.create.called)
-
+### End example of stubbing ###
