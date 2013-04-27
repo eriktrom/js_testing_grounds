@@ -11,6 +11,7 @@ files = [
   MOCHA,
   MOCHA_ADAPTER,
   'public/vendor/chai.js',
+  'chai-as-promised.js',
   'coffee/**/*_mocha_test.coffee'
 ];
 
