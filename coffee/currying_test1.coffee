@@ -4,7 +4,7 @@ add = (x, y) ->
   oldy = y
   if typeof oldy is "undefined"
     return (newy) -> oldx + newy
-  x + y 
+  x + y
 module "currying with add()"
 
 test "it returns a function when called with one one argument", ->
