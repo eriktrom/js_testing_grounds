@@ -8,13 +8,30 @@ basePath = '';
 
 // list of files / patterns to load in the browser
 files = [
+  'public/vendor/q.js',
+  // 'public/vendor/jquery-1.9.1.js',
+  // 'public/vendor/rsvp.js',
   MOCHA,
   MOCHA_ADAPTER,
+  'public/vendor/mocha-as-promised.js',
   'public/vendor/chai.js',
-  'chai-as-promised.js',
+  'public/vendor/chai-as-promised.js',
+  'public/vendor/sinon-chai.js',
+  'public/vendor/sinon-1.6.0.js',
   'coffee/**/*_mocha_test.coffee'
 ];
 
+// try using the es6-module-transpiler:
+// http://square.github.io/es6-module-transpiler/
+// compile-modules --type cjs --to output input
+//
+// Examples:
+// import "jquery" as jQuery;          // Import module as a variable
+// import Point from "math";           // Import one part of a module
+// import { sqrt, Point } from "math"; // Import multiple parts of a module
+// export = jQuery;                    // Export an object as the module
+// export Point;                       // Export an object as a module property
+// export { sqrt, Point };             // Export multiple objects as module properties
 
 // list of files to exclude
 exclude = [

@@ -8,6 +8,7 @@ basePath = '';
 
 // list of files / patterns to load in the browser
 files = [
+ 'public/vendor/rsvp.js',
   QUNIT,
   QUNIT_ADAPTER,
   // 'public/vendor/hamcrest.js',
