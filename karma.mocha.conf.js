@@ -18,7 +18,7 @@ files = [
   'public/vendor/chai-as-promised.js',
   'public/vendor/sinon-chai.js',
   'public/vendor/sinon-1.6.0.js',
-  'coffee/**/*_mocha_test.coffee'
+  'coffee/**/*_test.coffee'
 ];
 
 // try using the es6-module-transpiler:
